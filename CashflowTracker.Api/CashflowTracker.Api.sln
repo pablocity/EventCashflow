@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{5D8749
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashflowTracker.Data", "CashflowTracker.Data\CashflowTracker.Data.csproj", "{4718268D-4CB4-44B6-825B-676BC280CBD2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CashflowTracker.Contracts", "..\CashflowTracker.Common\CashflowTracker.Contracts\CashflowTracker.Contracts.csproj", "{45E4BC6E-F035-49B9-9A95-F805CA196ED9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CashflowTracker.Resources", "..\CashflowTracker.Common\CashflowTracker.Resources\CashflowTracker.Resources.csproj", "{37314569-C83D-4892-B905-5DA4B1DAB53A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,12 +29,22 @@ Global
 		{4718268D-4CB4-44B6-825B-676BC280CBD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4718268D-4CB4-44B6-825B-676BC280CBD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4718268D-4CB4-44B6-825B-676BC280CBD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45E4BC6E-F035-49B9-9A95-F805CA196ED9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45E4BC6E-F035-49B9-9A95-F805CA196ED9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45E4BC6E-F035-49B9-9A95-F805CA196ED9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45E4BC6E-F035-49B9-9A95-F805CA196ED9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37314569-C83D-4892-B905-5DA4B1DAB53A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37314569-C83D-4892-B905-5DA4B1DAB53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37314569-C83D-4892-B905-5DA4B1DAB53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37314569-C83D-4892-B905-5DA4B1DAB53A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4718268D-4CB4-44B6-825B-676BC280CBD2} = {36E303A2-16D3-4DD1-89CF-5B6609F82377}
+		{45E4BC6E-F035-49B9-9A95-F805CA196ED9} = {5D874949-AE84-4622-92D3-4113D980871B}
+		{37314569-C83D-4892-B905-5DA4B1DAB53A} = {5D874949-AE84-4622-92D3-4113D980871B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0B7FBC10-1265-448A-8B93-E7B984D3A7C3}

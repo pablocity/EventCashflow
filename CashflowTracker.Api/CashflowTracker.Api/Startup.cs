@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace CashflowTracker.Api
 {
@@ -26,6 +27,11 @@ namespace CashflowTracker.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info() { Title = "CashflowTracker", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,8 +47,20 @@ namespace CashflowTracker.Api
                 app.UseHsts();
             }
 
+            var swaggerOptions = new CashflowTracker.Api.Configurations.SwaggerOptions();
+
+            Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
+
             app.UseHttpsRedirection();
             app.UseMvc();
+            app.UseStaticFiles();
+            app.UseSwagger();
+            
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint(swaggerOptions.JsonRoute, "CashflowTracker API");
+                c.RoutePrefix = String.Empty;
+            });
         }
     }
 }
