@@ -4,9 +4,9 @@ using System.Text;
 
 namespace CashflowTracker.Models
 {
-    public class CostItem
+    public class CostItem : Entity
     {
-        public long Id { get; set; }
+        public override long Id { get; set; }
         public long EventId { get; set; }
         public Event Event { get; set; }
         public decimal Price { get; set; }

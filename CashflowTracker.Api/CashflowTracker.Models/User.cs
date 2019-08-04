@@ -4,9 +4,9 @@ using System.Text;
 
 namespace CashflowTracker.Models
 {
-    public class User
+    public class User : Entity
     {
-        public long Id { get; set; }
+        public override long Id { get; set; }
         public string Login { get; set; }
         public string UniqueIdentifier { get; set; }
         public ICollection<EventUser> EventUsers { get; set; }

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace CashflowTracker.Models
 {
-    public class RoleType
+    public class RoleType : Entity
     {
-        public long Id { get; set; }
+        public override long Id { get; set; }
         public string Name { get; set; }
     }
 }
