@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CashflowTracker.Contracts.Mediator;
+using CashflowTracker.Contracts.Mediator.Interfaces;
 using CashflowTracker.Data;
+using CashflowTracker.Handlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -39,6 +42,10 @@ namespace CashflowTracker.Api
             {
                 options.UseSqlServer(Configuration.GetConnectionString("CashflowTrackerDb"));
             });
+
+            var mediator = new Mediator() { HandlersAssembly = typeof(HandlersAssemblyAnchor).Assembly };
+
+            services.AddSingleton(typeof(IMediator), mediator);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
