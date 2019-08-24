@@ -10,7 +10,7 @@ namespace CashflowTracker.Contracts.Queries
         public int PageSize { get; set; }
     }
 
-    public class Query<TSearchCriteria>
+    public class Query<TSearchCriteria> : Query
     {
         public TSearchCriteria SearchCriteria { get; set; }
     }
