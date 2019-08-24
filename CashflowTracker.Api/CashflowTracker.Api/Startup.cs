@@ -2,10 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
+using AutoMapper;
+using CashflowTracker.Api.Configurations;
+using CashflowTracker.Contracts;
+using CashflowTracker.Contracts.Mediator;
+using CashflowTracker.Contracts.Mediator.Interfaces;
+using CashflowTracker.Data;
+using CashflowTracker.Handlers;
+using CashflowTracker.Models;
+using CashflowTracker.Repositories;
+using CashflowTracker.Repositories.Implementations;
+using CashflowTracker.Repositories.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -26,12 +39,30 @@ namespace CashflowTracker.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<MediatorOptions>(Configuration.GetSection(nameof(MediatorOptions)));
+
+            services.AddAutoMapper(
+                typeof(HandlersAssemblyAnchor).Assembly,
+                typeof(Startup).Assembly);
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info() { Title = "CashflowTracker", Version = "v1" });
             });
+
+            services.AddDbContext<CashflowTrackerContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("CashflowTrackerDb"));
+            });
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule<AutofacModule>();
+            builder.RegisterModule<HandlerModule>();
+            builder.RegisterModule<RepositoryModule>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,8 +79,7 @@ namespace CashflowTracker.Api
             }
 
             var swaggerOptions = new CashflowTracker.Api.Configurations.SwaggerOptions();
-
-            Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
+            Configuration.GetSection(nameof(Swashbuckle.AspNetCore.Swagger.SwaggerOptions)).Bind(swaggerOptions);
 
             app.UseHttpsRedirection();
             app.UseMvc();
