@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Linq;
+using CashflowTracker.Contracts.Configurations;
 
 namespace CashflowTracker.Contracts.Mediator
 {
@@ -12,38 +13,65 @@ namespace CashflowTracker.Contracts.Mediator
     {
         public Assembly HandlersAssembly { get; set; }
 
+        private readonly HandlersFactory factory;
+        private readonly IMediatorConfiguration options;
+
+        public Mediator(HandlersFactory factory, IMediatorConfiguration options)
+        {
+            this.options = options;
+            this.factory = factory;
+
+            HandlersAssembly = options.HandlersAssembly;
+        }
+
         public async Task<TResponse> Get<TResponse>(IRequest<TResponse> request)
         {
-            var handler = FindHandler<TResponse>(request) as Type;
+            var handler = options.UseAutofac ? ResolveHandler(request) : FindHandler(request);
+
+            Type handlerType = handler.GetType();
 
             if (handler == null)
                 throw new Exception("Handler with specified IRequest and TResponse wasn't found!");
 
-            MethodInfo handleMethod = handler
+            MethodInfo handleMethod = handlerType
                 .GetTypeInfo()
                 .GetMethod("Handle");
 
-            var handleResult = handleMethod.Invoke(Activator.CreateInstance(handler), new object[] { request });
+            var handleResult = handleMethod.Invoke(handler, new object[] { request });
 
             return await (Task<TResponse>)handleResult;
+        }
+
+        private object ResolveHandler<TResponse>(IRequest<TResponse> request)
+        {
+            Type requestHandlerType = typeof(IRequestHandler<,>);
+            Type requestType = request.GetType();
+            Type resultType = requestHandlerType.MakeGenericType(requestType, typeof(TResponse));
+
+            var handler = factory(resultType);
+
+            return handler;
         }
 
         private object FindHandler<TResponse>(IRequest<TResponse> request)
         {
             Type requestHandlerType = typeof(IRequestHandler<,>);
-            Type requestType = typeof(IRequest<>);
-            Type requestWithResponseType = requestType.MakeGenericType(typeof(TResponse));
-            Type resultType = requestHandlerType.MakeGenericType(requestWithResponseType, typeof(TResponse));
+            Type requestType = request.GetType();
+            Type resultType = requestHandlerType.MakeGenericType(requestType, typeof(TResponse));
 
             var handlerArguments = resultType.GetGenericArguments();
-            var handlerRequest = handlerArguments.Single(x => x.GetGenericTypeDefinition() == typeof(IRequest<>));
+            var handlerRequest = handlerArguments
+                .Single(x => x.GetInterfaces()
+                        .FirstOrDefault(y => y.IsGenericType
+                                && y.GetGenericTypeDefinition() == typeof(IRequest<>)) != null);
+
             var handlerResponse = handlerArguments.Single(x => x == typeof(TResponse));
 
             var handler = HandlersAssembly
                 .GetTypes()
                 .FirstOrDefault(type => IsHandler(handlerRequest, handlerResponse, type));
 
-            return handler;
+            return Activator.CreateInstance(handler);
         }
 
         private bool IsHandler(Type request, Type response, Type typeToCheck)
@@ -56,9 +84,7 @@ namespace CashflowTracker.Contracts.Mediator
                 var arguments = i.GetGenericArguments();
 
                 var requestArg = arguments
-                                .FirstOrDefault(x => x.IsInterface && x.IsGenericType && x == request 
-                                    || x.GetInterfaces()
-                                        .FirstOrDefault(y => y == request) != null);
+                                .FirstOrDefault(x => x == request);
 
                 var responseArg = arguments.FirstOrDefault(x => x == response);
 

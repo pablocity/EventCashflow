@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\CashflowTracker.Common\CashflowTracker.BaseRepositories\CashflowTracker.BaseRepositories.csproj" />
     <ProjectReference Include="..\CashflowTracker.Data\CashflowTracker.Data.csproj" />
   </ItemGroup>
